@@ -12,6 +12,7 @@ import ARKit
 class ViewController: UIViewController {
 
     @IBOutlet weak var sceneView: ARSCNView!
+    @IBOutlet weak var playBtn: UIButton!
     let configuration = ARWorldTrackingConfiguration()
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -31,6 +32,7 @@ class ViewController: UIViewController {
     
     @IBAction func didPressPlay(_ sender: Any) {
         addNode()
+        self.playBtn.isEnabled = false
     }
     
     func addNode() {
@@ -45,12 +47,24 @@ class ViewController: UIViewController {
         let touchCoordinates = sender.location(in: sceneViewTappedOn)
         let hitTest = sceneViewTappedOn.hitTest(touchCoordinates)
         if hitTest.isEmpty {
-            print("didn't touch anything")
+            print("Nothing was touched")
         } else {
             let results = hitTest.first!
-            let geometry = results.node.geometry
-            print(geometry)
+            let node = results.node
+            if node.animationKeys.isEmpty {
+                self.animateNode(node: node)
+            }
         }
+    }
+    
+    func animateNode(node: SCNNode) {
+        let spin = CABasicAnimation(keyPath: "position")
+        spin.fromValue = node.presentation.position
+        spin.toValue = SCNVector3(node.presentation.position.x - 0.2,node.presentation.position.y - 0.2,node.presentation.position.z - 0.2)
+        spin.duration = 0.07
+        spin.autoreverses = true
+        spin.repeatCount = 5
+        node.addAnimation(spin, forKey: "position")
     }
 }
 
