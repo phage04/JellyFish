@@ -1,0 +1,6 @@
+framework module Pods_JellyFish {
+  umbrella header "Pods-JellyFish-umbrella.h"
+
+  export *
+  module * { export * }
+}
